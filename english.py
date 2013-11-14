@@ -8,7 +8,7 @@ class EnglishPython(object):
 		self.code_obj = byteplay.Code.from_code(self.func.func_code)
 		self.bytecode = self.code_obj.code
 		self.english = []
-		self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store, 'return': self.return}
+		self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store, 'return': self.ret}
 		self.translation = {'load': None, 'call': "Call {0} with {1}", 'store': "Store {0} as {1}", 'return': "Return {0}"}
 		
 	def step_through_bytecode(self):
@@ -37,7 +37,7 @@ class EnglishPython(object):
 	def store(thing):
 		return self.stack.pop(), thing
 	
-	def return(thing):
+	def ret(thing):
 		return self.stack.pop()
 	
 	def instruction_type(com):
