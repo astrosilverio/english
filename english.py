@@ -9,8 +9,8 @@ class EnglishPython(object):
 		self.code_obj = byteplay.Code.from_code(self.func.func_code)
 		self.bytecode = self.code_obj.code
 		self.english = []
-		self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store, 'return': self.ret, 'BINARY_ADD': lambda x: self.binary('add', x)}
-		self.translation = {'load': None, 'call': "Call {0} with {1}", 'store': "Store {0} as {1}.", 'return': "Return {0}.", 'BINARY_ADD': "Compute {0}."}
+		self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store, 'return': self.ret, 'BINARY_ADD': lambda x: self.binary('add', x), 'BINARY_MULTIPLY': lambda x: self.binary('multiply',x)}
+		self.translation = {'load': None, 'call': "Call {0} with {1}", 'store': "Store {0} as {1}.", 'return': "Return {0}.", 'BINARY_ADD': "Compute {0}.", 'BINARY_MULTIPLY': "Compute {0}."}
 		self.operdict = {'add': '+', 'subtract': '-', 'multiply': '*', 'divide': '/'}
 		
 		
@@ -94,6 +94,7 @@ class EnglishPython(object):
 				print line
 			
 def foo(x):
+	x = x * x
 	return x + 1
 	
 def g(x):
