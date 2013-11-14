@@ -14,7 +14,7 @@ class EnglishPython(object):
 	def step_through_bytecode(self):
 		for line in self.bytecode:
 			command, args = line
-			if command = 'SetLineno':
+			if command == 'SetLineno':
 				line_num = args
 			try:
 				command = self.instruction_type(command)
