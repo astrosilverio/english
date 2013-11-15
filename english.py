@@ -94,24 +94,10 @@ class EnglishPython(object):
             if line[1]:
                 print line
 
-def foo(x):
-    x = x * x
-    return x + 1
 
-def g(x):
-    y = add(x, 60)
-    return y
-
-def h():
-    z = hello_world()
-    return z
-
-if __name__ == '__main__':
-    a = EnglishPython(foo)
-    a.print_english()
-
-    b = EnglishPython(g)
-    b.print_english()
-
-    c = EnglishPython(h)
-    c.print_english()
+    def english_string(self):
+        result = ''
+        for line in self.english:
+            if line[1]:
+                result=' '.join([result, line[1]])
+        return result
