@@ -13,8 +13,8 @@ if __name__ == '__main__':
 	print "\nBytecode:"
 	print a.bytecode
 	print "Translation:\n"
-	a.print_english()
+	print(a)
 	print "\n"
-	p = Popen(['say', a.english_string()])
+	p = Popen(['say', a.__repr__()])
 	
 	
