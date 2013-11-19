@@ -39,32 +39,32 @@ class FakeRun(object):
 #        return popped
 
     def call(self, num_args):
-        f_and_args = self.pythonstack[-(num_args+1):]
-        self.pythonstack = self.pythonstack[:-(num_args+1)]
+        f_and_args = self._pythonstack[-(num_args+1):]
+        self._pythonstack = self._pythonstack[:-(num_args+1)]
         call_string = EnglishByte('call', f_and_args)
-        self.pythonstack.append(call_string)
-        self.englishstack.append(call_string)
+        self._pythonstack.append(call_string)
+        self._englishstack.append(call_string)
 
     def load(self, variable):
         load_string = EnglishByte('load', variable)
-        self.pythonstack.append(load_string)
+        self._pythonstack.append(load_string)
 
     def store(self, variable):
-        value = self.pythonstack.pop()
+        value = self._pythonstack.pop()
         store_string = EnglishByte('store', [variable, value])
-        self.englishstack.append(store_string)
+        self._englishstack.append(store_string)
 
     def ret(self, thing):
-        value = self.pythonstack.pop()
+        value = self._pythonstack.pop()
         ret_string = EnglishByte('return', value)
-        self.englishstack.append(ret_string)
+        self._englishstack.append(ret_string)
 
     def binary(self, operator):
-        operand1 = self.pythonstack.pop()
-        operand2 = self.pythonstack.pop()
+        operand1 = self._pythonstack.pop()
+        operand2 = self._pythonstack.pop()
         binary_string = EnglishByte('binary', [operator, operand1, operand2]) 
-        self.pythonstack.append(binary_string)
-        self.englishstack.append(binary_string)
+        self._pythonstack.append(binary_string)
+        self._englishstack.append(binary_string)
 
     def instruction_type(self, line):
         com, args = line
