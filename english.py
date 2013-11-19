@@ -6,65 +6,65 @@ class FakeRun(object):
 
     def __init__(self, f):
         self.func = f
-        self.stack = []
-        self.code_obj = byteplay.Code.from_code(self.func.func_code)
-        self.disassembly = self.code_obj.code
+        self._pythonstack = []
+        self._englishstack = []
+        self._code_obj = byteplay.Code.from_code(self.func.func_code)
+        self.disassembly = self._code_obj.code
         self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store, 'return': self.ret,\
                          'binary': self.binary}
-        self.translation = {'load': None, 'call': "Call {0} with {1}", 'store': "Store {0} as {1}.",\
-                            'return': "Return {0}.", 'binary': "Compute {0}."}
         self.operdict = {'add': 'plus', 'subtract': 'minus', 'multiply': 'times', 'divide': 'divided by', 'power': 'raised to the power of', 'modulo': 'modulo', 'and': 'AND', 'or': 'OR', 'xor': 'XOR'}
                 
-
-    def step_through_bytecode(self):
+    @property
+    def englishstack(self):
         """
         Should this be a generator? Yield FTW :)
         """
-        result = []
         for line in self.disassembly:
             command, args = line
             command = str(command)
             if command == 'SetLineno':
-                line_num = args
+                self._englishstack.append(str(args))
             else:
                 try:
                     command, args = self.instruction_type(line)
-                    args_names = self.bytedict[command](args)
+                    self.bytedict[command](args)
                 except KeyError:
                     print("We don't support {} yet.".format(command))
                     continue
-                line_translation = self.translate(command, args_names)
-                result.append((line_num, line_translation))
-        return result
+        return self._englishstack
 
-    def pop_from_stack(self, pops): # takes number of things to pop
-        popped = self.stack[-pops:]
-        self.stack = self.stack[:-pops]
-        return popped
+#    def pop_from_stack(self, pops): # takes number of things to pop
+#        popped = self.pythonstack[-pops:]
+#        self.pythonstack = self.pythonstack[:-pops]
+#        return popped
 
     def call(self, num_args):
-        f_and_args = self.pop_from_stack(num_args+1)
-        stack_string = 'result of call to {}'.format(f_and_args[0])
-        self.stack.append(stack_string)
-        return f_and_args
+        f_and_args = self.pythonstack[-(num_args+1):]
+        self.pythonstack = self.pythonstack[:-(num_args+1)]
+        call_string = EnglishByte('call', f_and_args)
+        self.pythonstack.append(call_string)
+        self.englishstack.append(call_string)
 
-    def load(self, thing):
-        self.stack.append(thing)
-        return []
+    def load(self, variable):
+        load_string = EnglishByte('load', variable)
+        self.pythonstack.append(load_string)
 
-    def store(self, thing):
-        return [self.stack.pop(), thing]
+    def store(self, variable):
+        value = self.pythonstack.pop()
+        store_string = EnglishByte('store', [variable, value])
+        self.englishstack.append(store_string)
 
     def ret(self, thing):
-        return [self.stack.pop()]
+        value = self.pythonstack.pop()
+        ret_string = EnglishByte('return', value)
+        self.englishstack.append(ret_string)
 
     def binary(self, operator):
-        operand1 = self.stack.pop()
-        operand2 = self.stack.pop()
-        operation = self.operdict[operator[0]]
-        stack_string = 'result of {0} {1} {2}'.format(operand1, operation, operand2)
-        self.stack.append(stack_string)
-        return '{0} {1} {2}'.format(operand1, operation, operand2)
+        operand1 = self.pythonstack.pop()
+        operand2 = self.pythonstack.pop()
+        binary_string = EnglishByte('binary', [operator, operand1, operand2]) 
+        self.pythonstack.append(binary_string)
+        self.englishstack.append(binary_string)
 
     def instruction_type(self, line):
         com, args = line
@@ -78,26 +78,7 @@ class FakeRun(object):
             command = "binary"
             arguments = com[com.index('_') + 1:].lower(), args
         return command, arguments
-
-    def translate(self,command, arg_names):
-        if not arg_names:
-            return self.translation[command]
-        elif command == 'binary':
-            return self.translation[command].format(arg_names)
-        elif command == 'return':
-            return self.translation[command].format(arg_names[0])
-        elif command == 'store':
-            return self.translation[command].format(arg_names[0], arg_names[1])
-        elif command == 'call' and len(arg_names) == 1:
-            return self.translation[command].format(arg_names[0], 'no argument.')
-        elif command == 'call' and len(arg_names) == 2:
-            return self.translation[command].format(arg_names[0], ' '.join([str(arg_names[1]),'as argument.']))
-        elif command == 'call' and len(arg_names) > 2:
-            arg_string = ' '.join([' and '.join(map(str, arg_names[1:])), 'as arguments.'])
-            return self.translation[command].format(arg_names[0], arg_string)
-
-
-
+        
 
 class EnglishPython(object):
 
@@ -106,7 +87,7 @@ class EnglishPython(object):
         # Remove the None from the list
         self.code_obj = byteplay.Code.from_code(self.func.func_code)
         self.disassembly = self.code_obj.code
-        self.english_translation = filter(lambda x: x[1] is not None, FakeRun(self.func).step_through_bytecode())
+        self.english_translation = FakeRun(self.func).englishstack
 
     def __str__(self):
         return '\n'.join(('\t'.join((str(l[0]), l[1])) for l in self.english_translation))
@@ -117,7 +98,7 @@ class EnglishPython(object):
 
 class EnglishByte(object):
 
-    translation = {'load': None, 'call': "{0}", 'store': "Store {0} as {1}.",\
+    translation = {'load': "{0}", 'call': "{0}", 'store': "Store {0} as {1}.",\
                             'return': "Return {0}.", 'binary': "{1} {0} {2}"}
                             
     operdict = {'add': 'plus', 'subtract': 'minus', 'multiply': 'times', 'divide': 'divided by', 'power': 'raised to the power of', 'modulo': 'modulo', 'and': 'AND', 'or': 'OR', 'xor': 'XOR'}
@@ -130,9 +111,11 @@ class EnglishByte(object):
         if self.command == 'binary':
             self.byte_args[0] = operdict[self.byte_args[0]]
         self.formatted_string = self.translation[self.command].format(byte_args)
+        self._stack_english = None
+        self._full_english = None
 
 
-
+    @property
     def full_english(self):
         if self.command == 'binary':
             result = ' '.join(('Compute', self.formatted_string))
@@ -147,15 +130,16 @@ class EnglishByte(object):
             result = 'Call {0} with {1}.'.format(self.formatted_string, suffix)
         elif self.command in full_english_only:
             result = self.formatted_string
+        else:
+            result = None
+        self._full_english = result
         
-        return result
-
+    @property
     def stack_english(self):
         if self.command in full_english_only:
-            result = None
+            self._stack_english = None
         else:
-            result = self.formatted_string
-        return result
+            self._stack_english = self.formatted_string
 
 
     def translate(self, command, arg_names):
