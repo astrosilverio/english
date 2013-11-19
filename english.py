@@ -141,20 +141,3 @@ class EnglishByte(object):
         else:
             self._stack_english = self.formatted_string
 
-
-    def translate(self, command, arg_names):
-        if not arg_names:
-            return self.translation[command]
-        elif command == 'BINARY_ADD' or command == 'BINARY_SUBTRACT' or command == 'BINARY_MULTIPLY' or command == 'BINARY_DIVIDE':
-            return self.translation[command].format(arg_names)
-        elif command == 'return':
-            return self.translation[command].format(arg_names)
-        elif command == 'store':
-            return self.translation[command].format(arg_names[0], arg_names[1])
-        elif command == 'call' and len(arg_names) == 1:
-            return self.translation[command].format(arg_names[0], 'no argument.')
-        elif command == 'call' and len(arg_names) == 2:
-            return self.translation[command].format(arg_names[0], ' '.join([str(arg_names[1]),'as argument.']))
-        elif command == 'call' and len(arg_names) > 2:
-            arg_string = ' '.join([' and '.join(map(str, arg_names[1:])), 'as arguments.'])
-            return self.translation[command].format(arg_names[0], arg_string)
