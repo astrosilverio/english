@@ -13,12 +13,12 @@ class FakeRun(object):
                          'binary': self.binary}
         self.translation = {'load': None, 'call': "Call {0} with {1}", 'store': "Store {0} as {1}.",\
                             'return': "Return {0}.", 'binary': "Compute {0}."}
-        self.operdict = {'add': 'plus', 'subtract': 'minus', 'multiply': 'times', 'divide': 'divided by'}
+        self.operdict = {'add': 'plus', 'subtract': 'minus', 'multiply': 'times', 'divide': 'divided by', 'power': 'raised to the power of', 'modulo': 'modulo', 'and': 'AND', 'or': 'OR', 'xor': 'XOR'}
 
 
     def step_through_bytecode(self):
         """
-        Should this be a generator? Yiel FTW :)
+        Should this be a generator? Yield FTW :)
         """
         result = []
         for line in self.disassembly:
