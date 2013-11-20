@@ -1,5 +1,5 @@
 def g(a, b, c):
-        x = add(a, multiply(b, foo(c, 42)))
+        x = add(a, multiply(b, foo(c + 42)))
         return x
 
 if __name__ == '__main__':
@@ -7,7 +7,7 @@ if __name__ == '__main__':
         from subprocess import Popen
 
         print "\nFunction:"
-        print "\ndef g(x)\n    x = add(a, multiply(b, foo(c, 42)))\n    return x"
+        print "\ndef g(x)\n    x = add(a, multiply(b, foo(c + 42)))\n    return x"
         a = EnglishPython(g)
         print "\nBytecode:"
         print a.disassembly

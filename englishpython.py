@@ -18,4 +18,4 @@ class EnglishPython(object):
         return '\n'.join((l.full for l in self.english_translation))
 
     def __repr__(self):
-        return ' '.join((l for l in self.english_translation))
+        return ' '.join((l.full for l in self.english_translation))

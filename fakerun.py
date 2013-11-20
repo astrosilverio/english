@@ -9,15 +9,15 @@ class FakeRun(object):
     Class that "fake" runs the bytecode and create the translation during it.
     """
 
-    def __init__(self, f=None):
+    def __init__(self, f):
         self.func = f
-#        self._code_obj = byteplay.Code.from_code(self.func.func_code)
-#        self.disassembly = self._code_obj.code
+        self._code_obj = byteplay.Code.from_code(self.func.func_code)
+        self.disassembly = self._code_obj.code
         self._python_stack = []
         self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store,
                          'return': self.ret, 'binary': self.binary}
         self.english_stack = []
-#        self.run()
+        self.run()
 
     def run(self):
         """
@@ -38,7 +38,7 @@ class FakeRun(object):
     def call(self, num_args):
         f_and_args = map(lambda x: x.short, self._python_stack[-(num_args+1):])
         self._python_stack = self._python_stack[:-(num_args+1)]
-        call_string = EnglishByte('call', f_and_args)
+        call_string = EnglishByte('call', *f_and_args)
         self._python_stack.append(call_string)
         self.english_stack.append(call_string)
 

@@ -4,7 +4,7 @@ class EnglishByte(object):
     Class for handling the different string formating operations
     of the english translation.
     """
-    translation = {'load': "{0}", 'call': "{0}", 'store': "Store {0} as {1}.",
+    translation = {'load': "{0}", 'call': "result of call to {0}", 'store': "Store {0} as {1}.",
                    'return': "Return {0}.", 'binary': "{1} {0} {2}"}
 
     operdict = {'add': 'plus', 'subtract': 'minus', 'multiply': 'times', 'divide': 'divided by',
@@ -33,10 +33,10 @@ class EnglishByte(object):
             if len(func_arg) == 0:
                 suffix = 'no argument'
             elif len(func_arg) == 1:
-                suffix = '{0} as argument'.format(func_arg)
+                suffix = '{0} as argument'.format(*func_arg)
             else:
                 suffix = '{0} as arguments'.format(', '.join(map(str, func_arg)))
-            result = 'Call {0} with {1}.'.format(self.formatted_string, suffix)
+            result = 'Call {0} with {1}.'.format(self.byte_args[0], suffix)
         elif self.command in self.full_english_only:
             result = self.formatted_string
         else:
