@@ -15,7 +15,8 @@ class FakeRun(object):
         self.disassembly = self._code_obj.code
         self._python_stack = []
         self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store,
-                         'return': self.ret, 'binary': self.binary}
+                         'return': self.ret, 'binary': self.binary,
+                         'compare': self.compare}
         self.english_stack = []
         self.run()
 
@@ -62,6 +63,13 @@ class FakeRun(object):
         binary_string = EnglishByte('binary', operator, operand1, operand2) 
         self._python_stack.append(binary_string)
         self.english_stack.append(binary_string)
+        
+    def compare(self, operator):
+    	# can be refactored with binary
+        operand1 = self._python_stack.pop().short
+        operand2 = self._python_stack.pop().short
+        compare_string = EnglishByte('compare', operator, operand1, operand2) 
+        self._python_stack.append(binary_string)
 
     def instructions(self):
         for line in self.disassembly:
