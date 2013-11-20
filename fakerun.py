@@ -58,18 +58,18 @@ class FakeRun(object):
         self.english_stack.append(ret_string)
 
     def binary(self, operator):
-        operand1 = self._python_stack.pop().short
         operand2 = self._python_stack.pop().short
+        operand1 = self._python_stack.pop().short
         binary_string = EnglishByte('binary', operator, operand1, operand2) 
         self._python_stack.append(binary_string)
         self.english_stack.append(binary_string)
         
     def compare(self, operator):
     	# can be refactored with binary
-        operand1 = self._python_stack.pop().short
         operand2 = self._python_stack.pop().short
+        operand1 = self._python_stack.pop().short
         compare_string = EnglishByte('compare', operator, operand1, operand2) 
-        self._python_stack.append(binary_string)
+        self._python_stack.append(compare_string)
 
     def instructions(self):
         for line in self.disassembly:
@@ -83,9 +83,8 @@ class FakeRun(object):
             if command_type not in self.bytedict:
                 print("We don't support {} yet.".format(com))
                 raise KeyError
-            simple_commands = {"load", "call", "store", "return"}
-            if command_type in simple_commands:
-                arguments = args
             elif command_type == 'binary':
                 arguments = com[com.index('_') + 1:].lower()
+            else:
+                arguments = args
             yield command_type, arguments
