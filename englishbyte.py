@@ -35,7 +35,7 @@ class EnglishByte(object):
             elif len(func_arg) == 1:
                 suffix = '{0} as argument'.format(func_arg)
             else:
-                suffix = '{0} as arguments'.format(', '.join(str(func_arg)))
+                suffix = '{0} as arguments'.format(', '.join(map(str, func_arg)))
             result = 'Call {0} with {1}.'.format(self.formatted_string, suffix)
         elif self.command in self.full_english_only:
             result = self.formatted_string

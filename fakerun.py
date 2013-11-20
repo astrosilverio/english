@@ -9,15 +9,15 @@ class FakeRun(object):
     Class that "fake" runs the bytecode and create the translation during it.
     """
 
-    def __init__(self, f):
+    def __init__(self, f=None):
         self.func = f
-        self._code_obj = byteplay.Code.from_code(self.func.func_code)
-        self.disassembly = self._code_obj.code
+#        self._code_obj = byteplay.Code.from_code(self.func.func_code)
+#        self.disassembly = self._code_obj.code
         self._python_stack = []
         self.bytedict = {'load': self.load, 'call': self.call, 'store': self.store,
                          'return': self.ret, 'binary': self.binary}
         self.english_stack = []
-        self.run()
+#        self.run()
 
     def run(self):
         """
