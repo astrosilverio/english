@@ -11,7 +11,7 @@ class EnglishByte(object):
                 'power': 'raised to the power of', 'modulo': 'modulo', 'and': 'AND', 'or': 'OR',
                 'xor': 'XOR'}
 
-    full_english_only = ['store', 'return']
+    full_english_only = {'store', 'return'}
 
     def __init__(self, command, *byte_args):
         self.command = command
@@ -49,4 +49,3 @@ class EnglishByte(object):
         else:
             result = self.formatted_string
         return result
-    
