@@ -11,8 +11,8 @@ if __name__ == '__main__':
         print "\ndef h(x)\n    your_face = your_mom()\n    return butts"
         a = EnglishPython(h)
         print "\nBytecode:"
-        print a.bytecode
+        print a.disassembly
         print "Translation:\n"
-        a.print_english()
+        print(a)
         print "\n"
-        p = Popen(['say', a.english_string()])
+        #p = Popen(['say', a.english_string()])
