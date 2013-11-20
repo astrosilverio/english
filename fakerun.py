@@ -26,18 +26,9 @@ class FakeRun(object):
         # The handling of command is a really ugly
         # Can we handle line numbers in command_type
         # Should command be a generator
-        for line in self.disassembly:
-            command, args = line
-            command = str(command)
-            if command == 'SetLineno':
-                self.english_stack.append(str(args))
-            else:
-                try:
-                    command, args = self.instruction_type(line)
-                    self.bytedict[command](args)
-                except KeyError:
-                    print("We don't support {} yet.".format(command))
-                    continue
+        for command, args in self.instructions():
+            self.bytedict[command](args)
+
 
 #    def pop_from_stack(self, pops): # takes number of things to pop
 #        popped = self.pythonstack[-pops:]
@@ -45,7 +36,7 @@ class FakeRun(object):
 #        return popped
 
     def call(self, num_args):
-        f_and_args = self._python_stack[-(num_args+1):]
+        f_and_args = map(lambda x: x.short, self._python_stack[-(num_args+1):])
         self._python_stack = self._python_stack[:-(num_args+1)]
         call_string = EnglishByte('call', f_and_args)
         self._python_stack.append(call_string)
@@ -56,31 +47,37 @@ class FakeRun(object):
         self._python_stack.append(load_string)
 
     def store(self, variable):
-        value = self._python_stack.pop()
+        value = self._python_stack.pop().short
         store_string = EnglishByte('store', variable, value)
         self.english_stack.append(store_string)
 
     def ret(self, a_none):
-        value = self._python_stack.pop()
+        value = self._python_stack.pop().short
         ret_string = EnglishByte('return', value)
         self.english_stack.append(ret_string)
 
     def binary(self, operator):
-        operand1 = self._python_stack.pop()
-        operand2 = self._python_stack.pop()
+        operand1 = self._python_stack.pop().short
+        operand2 = self._python_stack.pop().short
         binary_string = EnglishByte('binary', operator, operand1, operand2) 
         self._python_stack.append(binary_string)
         self.english_stack.append(binary_string)
 
-    def instruction_type(self, line):
-        com, args = line
-        com = str(com)
-        commands = {"LOAD", "CALL", "STORE", "RETURN"}
-        for start in commands:
-            if com.startswith(start):
-                command =  start.lower()
+    def instructions(self):
+        for line in self.disassembly:
+            com, args = line
+            com = str(com)
+            if com == 'SetLineno':
+                self.line_number = str(args)
+                continue
+
+            command_type = com[:com.find('_')].lower()
+            if command_type not in self.bytedict:
+                print("We don't support {} yet.".format(com))
+                raise KeyError
+            simple_commands = {"load", "call", "store", "return"}
+            if command_type in simple_commands:
                 arguments = args
-        if com.startswith("BINARY"):
-            command = "binary"
-            arguments = com[com.index('_') + 1:].lower(), args
-        return command, arguments
+            elif command_type == 'binary':
+                arguments = com[com.index('_') + 1:].lower()
+            yield command_type, arguments

@@ -11,7 +11,7 @@ class EnglishByte(object):
                 'power': 'raised to the power of', 'modulo': 'modulo', 'and': 'AND', 'or': 'OR',
                 'xor': 'XOR'}
 
-    full_english_only = ['store', 'return']
+    full_english_only = {'store', 'return'}
 
     def __init__(self, command, *byte_args):
         self.command = command
@@ -35,7 +35,7 @@ class EnglishByte(object):
             elif len(func_arg) == 1:
                 suffix = '{0} as argument'.format(func_arg)
             else:
-                suffix = '{0} as arguments'.format(', '.join(str(func_arg)))
+                suffix = '{0} as arguments'.format(', '.join(map(str, func_arg)))
             result = 'Call {0} with {1}.'.format(self.formatted_string, suffix)
         elif self.command in self.full_english_only:
             result = self.formatted_string
@@ -49,4 +49,3 @@ class EnglishByte(object):
         else:
             result = self.formatted_string
         return result
-    

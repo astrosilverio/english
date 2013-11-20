@@ -1,6 +1,7 @@
 def f(x):
-    return 1
-
+    if x == 1:
+        pass
+    return x
 
 if __name__ == '__main__':
         from englishpython import *
