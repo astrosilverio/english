@@ -33,8 +33,6 @@ class FakeRun(object):
             #self.bytedict[command](args)
             self.call_byte(command, args)
 
-
-
     # Tuple order: (pop, append_to_python, append_to_english)
     def call(self, num_args):
         #(num_args+1,1,1)
@@ -92,7 +90,6 @@ class FakeRun(object):
             self._python_stack.append(byte_string)
         if num_eng:
             self.english_stack.append(byte_string)
-
 
     def instructions(self):
         for line in self.disassembly:
