@@ -1,16 +1,17 @@
 import byteplay
 from collections import deque
 
-from englishbyte import *
+from englishbyte import EnglishByte
 
 
 class FakeRun(object):
     """
     Class that "fake" runs the bytecode and create the translation during it.
     """
-    # Tuple order: (pop, append_to_python, append_to_english)    
-    tupledict = {'load': (0,1,0), 'store': (1,0,1), 'return': (1,0,1), 'binary': (2,1,1),
-                'compare': (2,1,0), 'call':(1,1,1)}
+
+    # Tuple order: (pop, append_to_python, append_to_english)
+    tupledict = {'load': (0,1,0), 'store': (1,0,1), 'return': (1,0,1),
+                 'binary': (2,1,1), 'compare': (2,1,0), 'call': (1, 1, 1)}
 
     def __init__(self, f):
         self.func = f
@@ -25,13 +26,13 @@ class FakeRun(object):
         """
         # How to handle line numbers?
         # Can we handle line numbers in command_type
-        for command, args in self.instructions():
-            self.call_byte(command, args)
+        for command, arg in self.instructions():
+            self.call_byte(command, arg)
 
     def call_byte(self, command, arg):
         if command == 'call': # num_pop should be arg + 1
-            num_pop, num_stack, num_eng = (arg+1, 1, 1)
-        else: 
+            num_pop, num_stack, num_eng = (arg + 1, 1, 1)
+        else:
             num_pop, num_stack, num_eng = self.tupledict[command]
         pops = deque()
         for _ in range(num_pop):
@@ -45,10 +46,10 @@ class FakeRun(object):
 
     def instructions(self):
         for line in self.disassembly:
-            com, args = line
+            com, byte_arg = line
             com = str(com)
             if com == 'SetLineno':
-                self.line_num = str(args)
+                self.line_num = str(byte_arg)
                 continue
 
             command_type = com[:com.find('_')].lower()
@@ -56,7 +57,7 @@ class FakeRun(object):
                 print("We don't support {} yet.".format(com))
                 raise KeyError
             elif command_type == 'binary':
-                arguments = com[com.index('_') + 1:].lower()
+                argument = com[com.index('_') + 1:].lower()
             else:
-                arguments = args
-            yield command_type, arguments
+                argument = byte_arg
+            yield command_type, argument
