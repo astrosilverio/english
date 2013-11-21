@@ -8,7 +8,7 @@ if __name__ == '__main__':
         from subprocess import Popen
 
         print "\nFunction:"
-        print "\ndef f(x)\n    x = x * x\n    return x + 1"
+        print "\ndef f(x)\n    if x == 1:\n    return x"
         a = EnglishPython(f)
         print "\nBytecode:"
         print a.disassembly
