@@ -15,7 +15,8 @@ class EnglishByte(object):
 
     short_english_only = {'load', 'compare'}
 
-    def __init__(self, command, *byte_args):
+    def __init__(self, command, line_num, *byte_args):
+        self.line_num = line_num
         self.arg_init = {'binary': self.binary_init, 'compare': self.compare_init, 'return': self.return_init,
                          'call': self.call_init}
         self.pre_formatted_string = self.translation[command]
@@ -38,7 +39,6 @@ class EnglishByte(object):
         operand1 = byte_args[1]
         operand2 = byte_args[2]
         self.short = self.pre_formatted_string.format(operation, operand1, operand2)
-
         self.prefix = "Compute "
 
     def compare_init(self, byte_args):
@@ -61,7 +61,9 @@ class EnglishByte(object):
         else:
             suffix = '{0} as arguments'.format(', '.join(map(str, args_of_func)))
         self.full = 'Call {0} with {1}.'.format(func, suffix)
+        self.full = '\t'.join([self.line_num, self.full])
 
     def _full_english(self):
         result = ''.join([self.prefix, self.short, self.suffix])
+        result = '\t'.join([self.line_num, result])
         return result
