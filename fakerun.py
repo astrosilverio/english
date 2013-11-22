@@ -11,13 +11,15 @@ class FakeRun(object):
 
     # Tuple order: (pop, append_to_python, append_to_english)
     tupledict = {'load': (0,1,0), 'store': (1,0,1), 'return': (1,0,1),
-                 'binary': (2,1,1), 'compare': (2,1,0), 'call': (1, 1, 1)}
+                 'binary': (2,1,1), 'compare': (2,1,0), 'call': (1, 1, 1),
+                 'else': (0,0,1), 'pop': (1,0,1)}
 
     def __init__(self, f):
         self.func = f
         self._code_obj = byteplay.Code.from_code(self.func.func_code)
         self.disassembly = self._code_obj.code
         self._python_stack = []
+        self._loops = []
         self.english_stack = []
         self.run()
 
@@ -37,7 +39,7 @@ class FakeRun(object):
         pops = deque()
         for _ in range(num_pop):
             pops.appendleft(self._python_stack.pop().short)
-        byte_string = EnglishByte(command, self.line_num, arg, *pops)
+        byte_string = EnglishByte(command, self.line_num, 0, arg, *pops)
         # num_stack and num_eng are 0 or 1
         if num_stack:
             self._python_stack.append(byte_string)
@@ -46,12 +48,18 @@ class FakeRun(object):
 
     def instructions(self):
         for line in self.disassembly:
-            com, byte_arg = line
-            com = str(com)
+            com_obj, byte_arg = line
+            com = str(com_obj)
             if com == 'SetLineno':
                 self.line_num = str(byte_arg)
                 continue
-
+            elif isinstance(com_obj, byteplay.Label):
+                self._loops = self._loops[:self._loops.index(com_obj)]
+                com = 'else_'
+            elif com.startswith('POP_JUMP'):
+                self._loops.append(byte_arg)
+                byte_arg = None
+                
             command_type = com[:com.find('_')].lower()
             if command_type not in self.tupledict:
                 print("We don't support {} yet.".format(com))

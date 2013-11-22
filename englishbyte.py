@@ -4,8 +4,9 @@ class EnglishByte(object):
     of the english translation.
     """
     translation = {'load': "{0}", 'call': "result of call to {0}",
-                   'store': "Store {0} as {1}",'return': "Return {0}",
-                   'binary': "{1} {0} {2}", 'compare': "{1} {0} {2}"}
+                   'store': "Store {0} as {1}.",'return': "Return {0}.",
+                   'binary': "{1} {0} {2}", 'compare': "{1} {0} {2}", 'else': "Else:",
+                   'pop': "If {0}, then:"}
 
     binary_operators = {'add': 'plus', 'subtract': 'minus', 'multiply': 'times',
                         'divide': 'divided by', 'power': 'raised to the power of',
@@ -17,11 +18,12 @@ class EnglishByte(object):
 
     short_english_only = {'load', 'compare'}
 
-    def __init__(self, command, line_num, *args):
+    def __init__(self, command, line_num, indents, *args):
         self.line_num = line_num
+        self.indents = indents
         self.pre_formatted_string = self.translation[command]
         self.prefix = ""
-        self.suffix = "."
+        self.suffix = ""
         special_init = getattr(self, '{}_init'.format(command), self.default_init)
         special_init(args)
 
@@ -30,6 +32,10 @@ class EnglishByte(object):
 
     def default_init(self, args):
         self.short = self.pre_formatted_string.format(*args)
+        
+    def pop_init(self, args):
+        jump_condition = args[1]
+        self.short = self.pre_formatted_string.format(jump_condition)
 
     def return_init(self, args):
         return_value = args[1]
@@ -68,5 +74,6 @@ class EnglishByte(object):
 
     def _full_english(self):
         result = ''.join([self.prefix, self.short, self.suffix])
-        result = '\t'.join([self.line_num, result])
+        tabs = '\t'*(self.indents + 1)
+        result = tabs.join([self.line_num, result])
         return result
