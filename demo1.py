@@ -1,14 +1,12 @@
 def f(x):
-    if x == 1:
-        pass
-    return x
+    return x + 1
 
 if __name__ == '__main__':
         from englishpython import *
         from subprocess import Popen
 
-        print "\nFunction:"
-        print "\ndef f(x)\n    if x == 1:\n    return x"
+        print "\nPython Code:"
+        print "\ndef f(x):\n\treturn x + 1"
         a = EnglishPython(f)
         print "\nBytecode:"
         print a.disassembly
