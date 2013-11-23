@@ -15,4 +15,4 @@ if __name__ == '__main__':
         print "Translation:\n"
         print(a)
         print "\n"
-        #p = Popen(['say', a.english_string()])
+        p = Popen(['say', a.__str__()])
