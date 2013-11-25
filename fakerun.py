@@ -30,10 +30,9 @@ class FakeRun(object):
             self.call_byte(command, arg)
 
     def call_byte(self, command, arg):
+        num_pop, num_stack, num_eng = self.tupledict[command]
         if command == 'call': # num_pop should be arg + 1
-            num_pop, num_stack, num_eng = (arg + 1, 1, 1)
-        else:
-            num_pop, num_stack, num_eng = self.tupledict[command]
+            num_pop += arg
         pops = deque()
         for _ in range(num_pop):
             pops.appendleft(self._python_stack.pop().short)
