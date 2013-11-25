@@ -51,11 +51,12 @@ class FakeRun(object):
             com_obj, byte_arg = line
             com = str(com_obj)
             if com == 'SetLineno':
-                self.line_num = str(byte_arg)
+                self.line_num = int(byte_arg)
                 continue
             elif isinstance(com_obj, byteplay.Label):
                 self._loops = self._loops[:self._loops.index(com_obj)]
                 com = 'else_'
+                self.line_num = self.line_num + 1
             elif com.startswith('POP_JUMP'):
                 self._loops.append(byte_arg)
                 byte_arg = None

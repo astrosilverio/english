@@ -24,8 +24,8 @@ class EnglishByte(object):
         self.pre_formatted_string = self.translation[command]
         self.prefix = ""
         self.suffix = ""
-        special_init = getattr(self, '{}_init'.format(command), self.default_init)
-        special_init(args)
+        current_init = getattr(self, '{}_init'.format(command), self.default_init)
+        current_init(args)
 
         if command != 'call' and command not in self.short_english_only:
             self.full = self._full_english()
@@ -70,10 +70,8 @@ class EnglishByte(object):
         else:
             suffix = '{0} as arguments'.format(', '.join(map(str, args_of_func)))
         self.full = 'Call {0} with {1}.'.format(func, suffix)
-        self.full = '\t'.join([self.line_num, self.full])
+        self.full = (self.line_num, self.full)
 
     def _full_english(self):
         result = ''.join([self.prefix, self.short, self.suffix])
-        tabs = '\t'*(self.indents + 1)
-        result = tabs.join([self.line_num, result])
-        return result
+        return (self.line_num, result)
