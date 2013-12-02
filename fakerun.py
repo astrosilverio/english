@@ -53,7 +53,7 @@ class FakeRun(object):
             if com == 'SetLineno':
                 self.line_num = int(byte_arg)
                 continue
-            elif com.startswith('JUMP_FOR'):
+            elif com.startswith('JUMP_'):
                 self._loops.append(byte_arg)
                 byte_arg = None
                 continue
