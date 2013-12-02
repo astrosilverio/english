@@ -32,7 +32,7 @@ class EnglishByte(object):
 
     def default_init(self, args):
         self.short = self.pre_formatted_string.format(*args)
-        
+
     def pop_init(self, args):
         jump_condition = args[1]
         self.short = self.pre_formatted_string.format(jump_condition)

@@ -14,28 +14,28 @@ class EnglishPython(object):
         self.disassembly = self.code_obj.code
         self.english_translation = map(lambda x: x.full, FakeRun(self.func).english_stack)
         self.create_num_tabs()
-        
+
     def create_num_tabs(self):
-        self.num_tab = {}
+        self.num_tabs = {}
         tabs = 0
-        line_num = self.func.func_code.co_firstlineno + 1
+        first_line = self.func.func_code.co_firstlineno
         for line in self.disassembly:
             if str(line[0]) == 'SetLineno':
-                line_num = line[1]
+                line_num = int(line[1]) - first_line + 1
             elif type(line[0]) == byteplay.Label:
-                self.num_tab[line_num + 1] = tabs - 1
+                self.num_tabs[line_num + 1] = tabs - 1
             # this is not the right thing to do
 #            elif str(line[0]).startswith('JUMP_ABS'):
 #                tabs -= 1
             elif type(line[1]) == byteplay.Label and not str(line[0]).startswith('JUMP_'):
-                self.num_tab[line_num] = tabs
+                self.num_tabs[line_num] = tabs
                 tabs += 1
             elif str(line[0]).startswith('JUMP_ABS'):
-                self.num_tab[line_num] = tabs
+                self.num_tabs[line_num] = tabs
             else:
-                self.num_tab[line_num] = tabs
+                self.num_tabs[line_num] = tabs
                 continue
-                
+
 #     def create_num_tabs(self):
 #         self.num_tab = {}
 #         tabs = 0
@@ -46,13 +46,14 @@ class EnglishPython(object):
 #             if line_text.startswith('If') or line_text.startswith('Else'):
 #                 self.num_tab[line_num] = tabs
 #                 tabs += 1
-            
+
     def __str__(self):
         result = ''
-        for line in self.english_translation:
+        for line_num, line_text in self.english_translation:
             tabs = ' '
-            tabs += '\t'*(self.num_tab[line[0]])
-            line_string = tabs.join((str(line[0]), line[1]))
+            tabs += '\t' * self.num_tab[line_num]
+            line_num += self.func.func_code.co_firstlineno
+            line_string = tabs.join((str(line_num), line_text))
             result = '\n'.join((result, line_string))
         return result
 
