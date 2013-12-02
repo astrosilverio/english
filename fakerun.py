@@ -53,13 +53,20 @@ class FakeRun(object):
             if com == 'SetLineno':
                 self.line_num = int(byte_arg)
                 continue
-            elif isinstance(com_obj, byteplay.Label):
-                self._loops = self._loops[:self._loops.index(com_obj)]
-                com = 'else_'
-                self.line_num = self.line_num + 1
+            elif com.startswith('JUMP_FOR'):
+                self._loops.append(byte_arg)
+                byte_arg = None
+                continue
             elif com.startswith('POP_JUMP'):
                 self._loops.append(byte_arg)
                 byte_arg = None
+            if isinstance(com_obj, byteplay.Label):
+                if com_obj in self._loops:
+                    self._loops.remove(com_obj)
+                    com = 'else_'
+                    self.line_num = self.line_num + 1
+                else:
+                    continue
                 
             command_type = com[:com.find('_')].lower()
             if command_type not in self.tupledict:

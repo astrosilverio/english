@@ -19,20 +19,21 @@ class EnglishPython(object):
         self.num_tab = {}
         tabs = 0
         line_num = self.func.func_code.co_firstlineno + 1
-        print line_num, type(line_num)
         for line in self.disassembly:
             if str(line[0]) == 'SetLineno':
                 line_num = line[1]
-                print line_num, type(line_num), tabs
             elif type(line[0]) == byteplay.Label:
                 self.num_tab[line_num + 1] = tabs - 1
+            # this is not the right thing to do
+            elif str(line[0]).startswith('JUMP_FOR'):
+                tabs -= 1
             elif type(line[1]) == byteplay.Label:
                 self.num_tab[line_num] = tabs
                 tabs += 1
             else:
                 self.num_tab[line_num] = tabs
                 continue
-
+                
     def __str__(self):
         result = ''
         for line in self.english_translation:
