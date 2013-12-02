@@ -1,34 +1,26 @@
 english
 =======
 
-A little experiment with Python bytecode. This is a Python to English "translator".
+A Python-to-English "translator" that takes Python code and returns English sentences.
 
-A lot of instructions are not yet supported (in particular if and for statements).
+How Does It Work?
+-------------------
 
-Objectives
-----------
+`english` first disassembles the source code into bytecode. Right now, we're doing this using `byteplay`. Then each line of bytecode is parsed and a brief description of the operation is generated.
 
 Examples
 --------
 
-```
-from englishpython import *
+Check out our demos for specific examples of the type of output you can expect. In general, the expected usage is to create an `EnglishPython` object for the function you would like to translate. The `__str__` method of the `EnglishPython` object will print the translation, along with the line numbers of where each operation occurs in the source code. The `__repr__` method will join the lines of translation together as one string.
 
-def f(x):
-    return x + 1
+Currently Supported Operations
+--------------------------------
+- Function calls
 
-example = EnglishPython(f)
-print(example)
-```
+- Binary operations
 
 TODO
 ----
-- Add support for if, elif and else block
-
-- Add support for indented outuput
+- Finish support for if, elif and else block (see if-else branch)
 
 - Drop the byteplay dependency (rewriting one of the dis functions)
-
-- Add tests for EnglishByte and write tests for FakeRun
-
-- Find a better name
