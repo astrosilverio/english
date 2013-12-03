@@ -14,14 +14,16 @@ class FakeRun(object):
                  'binary': (2,1,1), 'compare': (2,1,0), 'call': (1, 1, 1),
                  'else': (0,0,1), 'pop': (1,0,1)}
 
-    def __init__(self, f):
+    def __init__(self, f, run=True, call_return=False):
         self.func = f
         self._code_obj = byteplay.Code.from_code(self.func.func_code)
         self.disassembly = self._code_obj.code
         self._python_stack = []
         self._loops = []
         self.english_stack = []
-        self.run()
+        self.call_return = call_return
+        if run:
+            self.run()
 
     def run(self):
         """
@@ -32,10 +34,9 @@ class FakeRun(object):
             self.call_byte(command, arg)
 
     def call_byte(self, command, arg):
+        num_pop, num_stack, num_eng = self.tupledict[command]
         if command == 'call': # num_pop should be arg + 1
-            num_pop, num_stack, num_eng = (arg + 1, 1, 1)
-        else:
-            num_pop, num_stack, num_eng = self.tupledict[command]
+            num_pop += arg
         pops = deque()
         for _ in range(num_pop):
             pops.appendleft(self._python_stack.pop().short)
@@ -44,7 +45,9 @@ class FakeRun(object):
         if num_stack:
             self._python_stack.append(byte_string)
         if num_eng:
-            self.english_stack.append(byte_string)
+            self.english_stack.append(byte_string)           
+        if self.call_return:
+            return command, self.line_num, arg, pops
 
     def instructions(self):
         for line in self.disassembly:

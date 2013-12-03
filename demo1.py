@@ -1,19 +1,16 @@
-import byteplay
+def f(x):
+    return x + 1
 
-def fact(n):
-    if n <= 1:
-        return 1
-    else:
-        return n * fact(n-1)
         
 if __name__ == '__main__':
 
         from englishpython import *
         from subprocess import Popen
 
-        print "\nFunction:"
-        print "\ndef fact(n)\n\tif x <= 1:\n\t\treturn 1\n\telse:\n\t\treturn n * fact(n-1)"
-        a = EnglishPython(fact)
+        print "\nPython Code:"
+        print "\ndef f(x):\n\treturn x + 1"
+        a = EnglishPython(f)
+
         print "\nBytecode:"
         print a.disassembly
         print "Translation:\n"

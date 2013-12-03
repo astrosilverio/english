@@ -64,7 +64,7 @@ class EnglishByte(object):
         # dealing with the full english
         args_of_func= args[2:]
         if len(args_of_func) == 0:
-                suffix = 'no argument'
+            suffix = 'no argument'
         elif len(args_of_func) == 1:
             suffix = '{0} as argument'.format(*args_of_func)
         else:
