@@ -11,7 +11,7 @@ class TestEnglishPython(unittest.TestCase):
     def test_create_num_tabs(self):
         a = EnglishPython(f)
         a.create_num_tabs()
-        expected = {2: 0, 3: 1, 4:0, 5:1}
+        expected = {2: 0, 3: 1, 4:1, 5:1}
         self.assertEqual(expected, a.num_tabs)
 
 
