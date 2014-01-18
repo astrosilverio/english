@@ -87,10 +87,10 @@ class TestFakeRun(unittest.TestCase):
         self.foo_fakerun._python_stack = []
         self.foo_fakerun.run()
 
-        self.assertEqual('11\tCompute 3 plus x.', self.foo_fakerun.english_stack[0].full)
-        self.assertEqual('11\tCall bar with 4, 3 plus x as arguments.', self.foo_fakerun.english_stack[1].full)
-        self.assertEqual('11\tStore y as result of call to bar.', self.foo_fakerun.english_stack[2].full)
-        self.assertEqual('12\tReturn x is greater than y.', self.foo_fakerun.english_stack[3].full)
+        self.assertEqual((11, 'Compute 3 plus x'), self.foo_fakerun.english_stack[0].full)
+        self.assertEqual((11, 'Call bar with 4, 3 plus x as arguments.'), self.foo_fakerun.english_stack[1].full)
+        self.assertEqual((11, 'Store y as result of call to bar.'), self.foo_fakerun.english_stack[2].full)
+        self.assertEqual((12, 'Return x is greater than y.'), self.foo_fakerun.english_stack[3].full)
 
 
 if __name__ == '__main__':
